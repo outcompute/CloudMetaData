@@ -9,5 +9,12 @@
             "email": "gkumarrahul@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+		"psr-4": {
+			"OutCompute\CloudMetaData": "src",
+			"OutCompute\CloudMetaData\Cache": "src/Cache",
+			"OutCompute\CloudMetaData\Provider": "src/Provider"
+		}
+	}
 }
