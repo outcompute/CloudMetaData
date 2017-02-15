@@ -1,0 +1,13 @@
+{
+    "name": "outcompute/cloudmetadata",
+    "description": "Get metadata JSON within an instance from 169.254.169.254 across providers.",
+    "type": "library",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "outcompute",
+            "email": "gkumarrahul@gmail.com"
+        }
+    ],
+    "require": {}
+}
