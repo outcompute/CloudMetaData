@@ -20,13 +20,15 @@ class MetaData
 	const EXPIRESIN = 300;
 
 	private $_data;
+	private $_provider;
 
 	public function __construct($cache = null, $providerFilter = null) {
 		$this->_data = null;
+		$this->_provider = null;
 		$cacheKey = 'cloudmetadata';
 
 		# List of supported providers to try against
-		$providers = array('DigitalOcean', 'AWS');
+		$providers = array('AWS', 'DigitalOcean');
 
 		if($cache != null) {
 			$metadata = $cache->get($cacheKey);
@@ -39,6 +41,7 @@ class MetaData
 					$uptime > self::EXPIRESIN
 				) {
 					$this->_data = $metadata['data'];
+					$this->_provider = $metadata['provider'];
 				}
 			}
 		}
@@ -53,7 +56,8 @@ class MetaData
 				if($this->_data != null) {
 					# The first match has been found, and return after saving to cache, if cache object is set
 					if($cache != null)
-						$cache->set($cacheKey, array('created' => time(), 'data' => $this->_data));
+						$cache->set($cacheKey, array('created' => time(), 'provider' => $provider, 'data' => $this->_data));
+					$this->_provider = $provider;
 					break;
 				}
 			}
@@ -62,12 +66,13 @@ class MetaData
 
 	public function get($format = 'array')
 	{
+		$response = array('provider' => $this->_provider, 'metadata' => $this->_data);
 		switch($format) {
 			case 'json':
-				return json_encode($this->_data, JSON_PRETTY_PRINT);
+				return json_encode($response, JSON_PRETTY_PRINT);
 				break;
 			default:
-				return $this->_data;
+				return $response;
 				break;
 		}
 	}
