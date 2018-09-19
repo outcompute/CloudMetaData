@@ -1,4 +1,10 @@
 <?php
+/**
+ * The AbstractCache class file.
+ *
+ * @author     outcompute
+ */
+
 namespace OutCompute\CloudMetaData\Cache;
 
 abstract class AbstractCache
