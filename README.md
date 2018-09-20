@@ -54,7 +54,7 @@ var_export($metaData);
 License
 ----
 
-GPL v2
+MIT
 
    [awsmetadata]: <http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html>
    [azuremetadata]: <https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service>

@@ -25,7 +25,7 @@ class MetaData
 		$cacheKey = 'cloudmetadata';
 
 		# List of supported providers to try against
-		$providers = array('AWS', 'Azure', 'DigitalOcean');
+		$providers = array('AWS', 'Azure', 'DigitalOcean', 'GCP');
 
 		if($cache != NULL) {
 			$metadata = $cache->get($cacheKey);
@@ -61,9 +61,22 @@ class MetaData
 		}
 	}
 
-	public function get($format = 'array')
-	{
+	public function get($format = 'array', $templateName = NULL) {
 		$response = array('provider' => $this->_provider, 'metadata' => $this->_data);
+		$templatedResponse = NULL;
+
+		if($templateName != NULL) {
+			$parsedResponseObject = NULL;
+			$templatePath = rtrim(__DIR__, '/').'/../templates/'.basename($templateName);
+			if(file_exists($templatePath))
+				$templateObject = json_decode(file_get_contents($templatePath), true);
+			if($templateObject != NULL) {
+				$parserObject = TemplateParserFactory::factory($response['provider'], $response['metadata']);
+				$parsedResponseObject = $this->_parseTemplate($templateObject, $parserObject);
+			}
+			$response = $parsedResponseObject;
+		}
+
 		switch($format) {
 			case 'json':
 				return json_encode($response, JSON_PRETTY_PRINT);
@@ -72,6 +85,24 @@ class MetaData
 				return $response;
 				break;
 		}
+	}
+
+	private function _parseTemplate($templateObject, $parserObject) {
+		foreach($templateObject as $k => $v) {
+			switch(gettype($v)) {
+				case "string":
+					$templateObject[$k] = $parserObject->get($v);
+				break;
+				case "array":
+				case "object":
+					$templateObject[$k] = $this->_parseTemplate($v, $parserObject);
+				break;
+				default:
+					$templateObject[$k] = $v;
+				break;
+			}
+		}
+		return $templateObject;
 	}
 }
 ?>
