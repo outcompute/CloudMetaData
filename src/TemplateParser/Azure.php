@@ -33,21 +33,23 @@ class Azure extends Base
         		return strtolower($this->_metaData['compute']['name']);
         	break;
         	case '{{metadata.attributes}}':
-				$tagPairs = explode(';', $this->_metaData['compute']['tags']);
+				$tagPairs = explode(';', trim($this->_metaData['compute']['tags']));
 				$tags = array();
 				foreach($tagPairs as $keyValue) {
-					list($key, $value) = explode(':', $keyValue);
-					$tags[strtolower($key)] = strtolower($value);
+					if(strlen(trim($keyValue)) > 0) {
+						list($key, $value) = explode(':', $keyValue);
+						$tags[strtolower($key)] = strtolower($value);
+					}
 				}
 				return $tags;
         	break;
         	case '{{devices.interfaces}}':
         		return array(
         			'public' => array(
-        				'ip' => $this->_metaData['network']['interface'][0]['ipv4']['ipAddress']['publicIpAddress']
+        				'ip' => $this->_metaData['network']['interface'][0]['ipv4']['ipAddress'][0]['publicIpAddress']
         			),
         			'private' => array(
-        				'ip' => $this->_metaData['network']['interface'][0]['ipv4']['ipAddress']['privateIpAddress']
+        				'ip' => $this->_metaData['network']['interface'][0]['ipv4']['ipAddress'][0]['privateIpAddress']
         			)
         		);
         	break;

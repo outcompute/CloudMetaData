@@ -1,0 +1,25 @@
+{
+    "metadata": {
+        "provider": "{{metadata.provider}}",
+        "id": "{{metadata.id}}",
+        "name": "{{metadata.name}}",
+        "region": "{{metadata.region}}",
+        "attributes": "{{metadata.attributes}}"
+    },
+    "users": "{{users}}",
+    "devices": {
+        "cpu": {
+            "count": "{{devices.cpu.count}}"
+        },
+        "gpu": {
+            "count": "{{devices.gpu.count}}"
+        },
+        "memory": {
+            "total": "{{devices.memory.total}}"
+        },
+        "block": {
+            "count": "{{devices.block.count}}"
+        },
+        "interfaces": "{{devices.interfaces}}"
+    }
+}
