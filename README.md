@@ -10,7 +10,7 @@ The 169.254.169.254 is a link-local address and you can read up more about them 
 ### Installation
 Add this line to your composer.json file,
 ```json
-"outcompute/cloudmetadata": "1.4.0"
+"outcompute/cloudmetadata": "1.5.0"
 ```
 and run.
 ```sh
