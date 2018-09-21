@@ -5,9 +5,6 @@
  * This fetches the metadata from the Amazon meta data service
  *
  * @author     outcompute
- * @license    https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt GPL v2
- * @version    1.0.0
- * @since      File available since Release 1.0.0
  */
 
 namespace OutCompute\CloudMetaData\Provider;
@@ -26,10 +23,15 @@ class AWS extends AbstractProvider
         # Furthermore we need to segregate them because although AWS documentation does mention that all keys ending in '/'
         # have expansions, the keys reported at http://169.254.169.254/latest/ don't end in '/'
         $keys = array('dynamic/', 'meta-data/', 'user-data/');
-        foreach($keys as $key)
-            $response[trim($key, '/')] = $this->_recurse(self::BASE, $key);
+        $allValuesNull = true;
+        foreach($keys as $key) {
+            $value = $this->_recurse(self::BASE, $key);
+            $response[trim($key, '/')] = $value;
+            if($value != NULL)
+                $allValuesNull = false;
+        }
 
-        return $response;
+        return $allValuesNull == true ? NULL : $response;
     }
 
     private function _recurse($url, $key) {

@@ -3,9 +3,6 @@
  * The AbstractProvider class file.
  *
  * @author     outcompute
- * @license    https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt GPL v2
- * @version    1.0.0
- * @since      File available since Release 1.0.0
  */
 
 namespace OutCompute\CloudMetaData\Provider;
@@ -20,6 +17,8 @@ abstract class AbstractProvider
         if(function_exists('curl_init')) {
             $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            foreach($options as $opt)
+                curl_setopt($curl, $opt['option'], $opt['value']);
             $result = curl_exec($curl);
             $info = curl_getinfo($curl);
             $errorStr = curl_error($curl);
@@ -27,6 +26,8 @@ abstract class AbstractProvider
 
             if($info['http_code'] == 200)
                 return $result;
+            else
+                return NULL;
         } else {
             throw new \Exception("OutCompute\CloudMetaData\Provider\AbstractProvider : curl not installed. Failed to connect to $url");
         }

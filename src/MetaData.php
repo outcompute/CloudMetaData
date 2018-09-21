@@ -7,9 +7,6 @@
  * in case interface addresses or any other property has been re-assigned.
  *
  * @author     outcompute
- * @license    https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt GPL v2
- * @version    1.0.0
- * @since      File available since Release 1.0.0
  */
 
 namespace OutCompute\CloudMetaData;
@@ -22,15 +19,15 @@ class MetaData
 	private $_data;
 	private $_provider;
 
-	public function __construct($cache = null, $providerFilter = null) {
-		$this->_data = null;
-		$this->_provider = null;
+	public function __construct($cache = NULL, $providerFilter = NULL) {
+		$this->_data = NULL;
+		$this->_provider = NULL;
 		$cacheKey = 'cloudmetadata';
 
 		# List of supported providers to try against
-		$providers = array('AWS', 'DigitalOcean');
+		$providers = array('AWS', 'Azure', 'DigitalOcean', 'GCP');
 
-		if($cache != null) {
+		if($cache != NULL) {
 			$metadata = $cache->get($cacheKey);
 			if($metadata != NULL) {
 				$uptime = floatval(@file_get_contents('/proc/uptime'));
@@ -46,16 +43,16 @@ class MetaData
 			}
 		}
 
-		if($this->_data == null) {
-			if($providerFilter != null && is_array($providerFilter))
+		if($this->_data == NULL) {
+			if($providerFilter != NULL && is_array($providerFilter))
 				$providers = array_intersect($providers, $providerFilter);
 
 			foreach($providers as $provider) {
 				$this->_data = call_user_func(array(ProviderFactory::factory($provider), 'get'));
 
-				if($this->_data != null) {
+				if($this->_data != NULL) {
 					# The first match has been found, and return after saving to cache, if cache object is set
-					if($cache != null)
+					if($cache != NULL)
 						$cache->set($cacheKey, array('created' => time(), 'provider' => $provider, 'data' => $this->_data));
 					$this->_provider = $provider;
 					break;
@@ -64,9 +61,22 @@ class MetaData
 		}
 	}
 
-	public function get($format = 'array')
-	{
+	public function get($format = 'array', $templateName = NULL) {
 		$response = array('provider' => $this->_provider, 'metadata' => $this->_data);
+		$templatedResponse = NULL;
+
+		if($templateName != NULL) {
+			$parsedResponseObject = NULL;
+			$templatePath = rtrim(__DIR__, '/').'/../templates/'.basename($templateName);
+			if(file_exists($templatePath))
+				$templateObject = json_decode(file_get_contents($templatePath), true);
+			if($templateObject != NULL) {
+				$parserObject = TemplateParserFactory::factory($response['provider'], $response['metadata']);
+				$parsedResponseObject = $this->_parseTemplate($templateObject, $parserObject);
+			}
+			$response = $parsedResponseObject;
+		}
+
 		switch($format) {
 			case 'json':
 				return json_encode($response, JSON_PRETTY_PRINT);
@@ -75,6 +85,24 @@ class MetaData
 				return $response;
 				break;
 		}
+	}
+
+	private function _parseTemplate($templateObject, $parserObject) {
+		foreach($templateObject as $k => $v) {
+			switch(gettype($v)) {
+				case "string":
+					$templateObject[$k] = $parserObject->get($v);
+				break;
+				case "array":
+				case "object":
+					$templateObject[$k] = $this->_parseTemplate($v, $parserObject);
+				break;
+				default:
+					$templateObject[$k] = $v;
+				break;
+			}
+		}
+		return $templateObject;
 	}
 }
 ?>

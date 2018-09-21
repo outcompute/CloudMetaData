@@ -2,19 +2,20 @@
     "name": "outcompute/cloudmetadata",
     "description": "Get metadata JSON within an instance from 169.254.169.254 across providers.",
     "type": "library",
-    "license": "GPL-2.0",
+    "license": "MIT",
     "authors": [
         {
-            "name": "outcompute",
-            "email": "gkumarrahul@gmail.com"
+        "name": "outcompute",
+        "email": "gkumarrahul@gmail.com"
         }
     ],
     "require": {},
     "autoload": {
-		"psr-4": {
-			"OutCompute\\CloudMetaData\\": "src",
-			"OutCompute\\CloudMetaData\\Cache\\": "src/Cache",
-			"OutCompute\\CloudMetaData\\Provider\\": "src/Provider"
-		}
-	}
+        "psr-4": {
+            "OutCompute\\CloudMetaData\\": "src",
+            "OutCompute\\CloudMetaData\\Cache\\": "src/Cache",
+            "OutCompute\\CloudMetaData\\Provider\\": "src/Provider",
+            "OutCompute\\CloudMetaData\\TemplateParser\\": "src/TemplateParser"
+        }
+    }
 }

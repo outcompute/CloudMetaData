@@ -5,9 +5,6 @@
  * This fetches the metadata from the DigitalOcean meta data service
  *
  * @author     outcompute
- * @license    https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt GPL v2
- * @version    1.0.0
- * @since      File available since Release 1.0.0
  */
 
 namespace OutCompute\CloudMetaData\Provider;
