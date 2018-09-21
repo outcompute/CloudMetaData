@@ -23,14 +23,15 @@ class AWS extends AbstractProvider
         # Furthermore we need to segregate them because although AWS documentation does mention that all keys ending in '/'
         # have expansions, the keys reported at http://169.254.169.254/latest/ don't end in '/'
         $keys = array('dynamic/', 'meta-data/', 'user-data/');
+        $allValuesNull = true;
         foreach($keys as $key) {
             $value = $this->_recurse(self::BASE, $key);
-            if($value == NULL)
-                return NULL;
             $response[trim($key, '/')] = $value;
+            if($value != NULL)
+                $allValuesNull = false;
         }
 
-        return $response;
+        return $allValuesNull == true ? NULL : $response;
     }
 
     private function _recurse($url, $key) {

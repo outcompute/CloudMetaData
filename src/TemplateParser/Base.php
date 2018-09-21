@@ -36,7 +36,7 @@ class Base
 				foreach($usernames as $user) {
 					$keyPath = "/home/$user/.ssh/authorized_keys";
 					if(file_exists($keyPath)) {
-						$keys = trim(shell_exec("sudo cat $keyPath"));
+						$keys = trim(shell_exec("sudo cat $keyPath | egrep -v '(^#.*|^$)'"));
 						$sshKeys[$user] = explode(PHP_EOL, $keys);
 					}
 				}
